@@ -1,0 +1,6 @@
+name: Run StockSenseAI Pipeline
+
+on:
+  schedule:
+    - cron: "* * * * *"   # every 1 minute
+  workflow_dispatch:       # allows manual trigger

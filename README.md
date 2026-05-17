@@ -2,6 +2,44 @@
 
 StockSenseAI is an AI-powered market-news intelligence app for Indian equities. It collects RSS market news, removes duplicates, extracts structured trading signals with Groq LLMs, stores everything in SQLite, and presents the results in a Flask web dashboard.
 
+## Dashboard Preview
+
+### 1. Main dashboard overview
+
+This is the primary operating view of StockSenseAI. It shows top-level KPIs, sync status, manual refresh controls, watchlist filtering, date filtering, confidence filtering, and chart-based summaries for quick market scanning.
+
+![Main dashboard overview](assets/screenshots/overview-dashboard.png)
+
+### 2. Market analytics and stock concentration
+
+This section highlights which tickers are being mentioned most often, along with the current priority mix and risk mix across all generated signals. It helps surface where the news flow is concentrated and how aggressive or cautious the signal set looks.
+
+![Market analytics and stock concentration](assets/screenshots/analytics-panels.png)
+
+### 3. Action queue, live prices, source health, and alert log
+
+The dashboard also includes an action queue for the strongest trading ideas, a live price snapshot for tracked tickers, RSS source health monitoring, and an alerts panel that records outbound Telegram or webhook deliveries.
+
+![Action queue, live prices, source health, and alerts](assets/screenshots/action-queue-price-source-alerts.png)
+
+### 4. Intelligence feed with signal cards
+
+Each news card in the intelligence feed contains the article source, published time, horizon, confidence, score, reasoning, priority, risk, mapped stocks, and a manual Telegram send button. This is the core analyst workflow for reviewing one signal at a time.
+
+![Intelligence feed with signal cards](assets/screenshots/intelligence-feed-llm.png)
+
+### 5. Date-grouped feed for time-based review
+
+Signals are grouped by date so you can review news chronologically. This makes it easier to scan today’s stories separately from previous trading sessions.
+
+![Date grouped intelligence feed](assets/screenshots/date-grouped-feed.png)
+
+### 6. Fallback view when the LLM is unavailable
+
+If the Groq LLM is unavailable, the app still keeps the feed running by using a rule-based fallback. This preserves continuity and makes failures visible instead of silently dropping news items.
+
+![Fallback signal generation view](assets/screenshots/intelligence-feed-fallback.png)
+
 ## Features
 
 - Multi-source RSS ingestion from Moneycontrol, Economic Times, LiveMint, Business Standard, and NSE feeds.

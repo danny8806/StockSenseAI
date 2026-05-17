@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>StockSenseAI</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Market intelligence</p>
+        <h1>StockSenseAI</h1>
+      </div>
+      <div class="actions">
+        <label class="auto-refresh">
+          <input id="autoRefreshToggle" type="checkbox" checked>
+          <span>Sync 60s</span>
+          <strong id="refreshCountdown">60</strong>
+        </label>
+        <button id="quotesBtn" type="button" class="ghost">Load Prices</button>
+        <button id="refreshBtn" type="button">Refresh News</button>
+        <button id="resetBtn" type="button" class="ghost">Reset DB</button>
+        <form method="post" action="/logout">
+          <button type="submit" class="ghost">Logout</button>
+        </form>
+      </div>
+    </header>
+
+    <main>
+      <section class="metrics" aria-label="Summary metrics">
+        <article>
+          <span>Total Signals</span>
+          <strong id="totalSignals">0</strong>
+        </article>
+        <article>
+          <span>Buy</span>
+          <strong id="buySignals">0</strong>
+        </article>
+        <article>
+          <span>Sell</span>
+          <strong id="sellSignals">0</strong>
+        </article>
+        <article>
+          <span>High Priority</span>
+          <strong id="highPriority">0</strong>
+        </article>
+        <article>
+          <span>Avg Action Score</span>
+          <strong id="avgScore">0</strong>
+        </article>
+        <article>
+          <span>Avg Confidence</span>
+          <strong id="avgConfidence">0</strong>
+        </article>
+      </section>
+
+      <section class="toolbar" aria-label="Signal filters">
+        <label>
+          Search
+          <input id="searchInput" type="search" placeholder="Headline, stock, source">
+        </label>
+        <label>
+          Watchlist
+          <input id="watchlistInput" type="search" placeholder="RELIANCE.NS,TCS.NS">
+        </label>
+        <label>
+          Event
+          <select id="eventFilter">
+            <option value="">All events</option>
+          </select>
+        </label>
+        <label>
+          Sentiment
+          <select id="sentimentFilter">
+            <option value="">All sentiment</option>
+          </select>
+        </label>
+        <label>
+          Suggestion
+          <select id="suggestionFilter">
+            <option value="">All suggestions</option>
+          </select>
+        </label>
+        <label>
+          Priority
+          <select id="priorityFilter">
+            <option value="">All priorities</option>
+          </select>
+        </label>
+        <label>
+          Risk
+          <select id="riskFilter">
+            <option value="">All risk</option>
+          </select>
+        </label>
+        <label>
+          Date
+          <select id="dateFilter">
+            <option value="">All dates</option>
+            <option value="today">Today</option>
+            <option value="yesterday">Yesterday</option>
+            <option value="last7">Last 7 days</option>
+            <option value="last30">Last 30 days</option>
+            <option value="custom">Custom range</option>
+          </select>
+        </label>
+        <label>
+          From
+          <input id="dateFromFilter" type="date">
+        </label>
+        <label>
+          To
+          <input id="dateToFilter" type="date">
+        </label>
+        <label>
+          Sort
+          <select id="sortFilter">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="priority">Priority first</option>
+            <option value="score">Action score</option>
+            <option value="confidence">Confidence</option>
+          </select>
+        </label>
+        <label>
+          Confidence
+          <input id="confidenceFilter" type="range" min="0" max="0.95" step="0.05" value="0">
+          <span id="confidenceValue">0.00</span>
+        </label>
+      </section>
+
+      <section class="charts" aria-label="Analytics charts">
+        <div class="panel">
+          <h2>Signal Mix</h2>
+          <canvas id="suggestionChart"></canvas>
+        </div>
+        <div class="panel">
+          <h2>Event Types</h2>
+          <canvas id="eventChart"></canvas>
+        </div>
+        <div class="panel wide">
+          <h2>Top Mentioned Stocks</h2>
+          <div id="stockBars" class="stock-bars"></div>
+        </div>
+        <div class="panel">
+          <h2>Priority Mix</h2>
+          <canvas id="priorityChart"></canvas>
+        </div>
+        <div class="panel">
+          <h2>Risk Mix</h2>
+          <canvas id="riskChart"></canvas>
+        </div>
+      </section>
+
+      <section class="decision-board" aria-label="Action board">
+        <div class="panel">
+          <h2>Action Queue</h2>
+          <div id="actionQueue" class="mini-list"></div>
+        </div>
+        <div class="panel">
+          <h2>Price Snapshot</h2>
+          <div id="quoteList" class="mini-list"></div>
+        </div>
+        <div class="panel">
+          <h2>Source Health</h2>
+          <div id="sourceHealth" class="mini-list"></div>
+        </div>
+        <div class="panel">
+          <h2>Alerts</h2>
+          <div id="alertList" class="mini-list"></div>
+        </div>
+      </section>
+
+      <section class="feed">
+        <div class="feed-header">
+          <h2>Intelligence Feed</h2>
+          <p id="statusText">Loading signals...</p>
+        </div>
+        <div id="signalList" class="signal-list"></div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>Designed and built by Dnyaneshwar Jadhav</span>
+      <a href="tel:+918806160767">8806160767</a>
+    </footer>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+  </body>
+</html>

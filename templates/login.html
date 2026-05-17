@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login - StockSenseAI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  </head>
+  <body class="login-page">
+    <main class="login-shell">
+      <form class="login-card" method="post">
+        <p class="eyebrow">Protected dashboard</p>
+        <h1>StockSenseAI</h1>
+        {% if error %}
+          <p class="login-error">{{ error }}</p>
+        {% endif %}
+        <label>
+          Username
+          <input name="username" autocomplete="username" required>
+        </label>
+        <label>
+          Password
+          <input name="password" type="password" autocomplete="current-password" required>
+        </label>
+        <button type="submit">Login</button>
+        <p class="creator-credit">Designed and built by Dnyaneshwar Jadhav · 8806160767</p>
+      </form>
+    </main>
+  </body>
+</html>

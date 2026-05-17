@@ -1,151 +1,150 @@
-##                                                                   📊 StockSenseAI
+# StockSenseAI
 
-StockSenseAI is an AI-powered financial intelligence system that transforms real-time market news into structured, explainable stock signals using Large Language Models (LLMs), semantic deduplication, and event-driven analysis — designed for traders, investors, and research use.
+StockSenseAI is an AI-powered market-news intelligence app for Indian equities. It collects RSS market news, removes duplicates, extracts structured trading signals with Groq LLMs, stores everything in SQLite, and presents the results in a Flask web dashboard.
 
-🚀 Key Features
+## Features
 
-🔎 Multi-source News Aggregation
-Collects financial news from multiple free Indian market sources.
+- Multi-source RSS ingestion from Moneycontrol, Economic Times, LiveMint, Business Standard, and NSE feeds.
+- Stable news IDs to avoid repeated inserts across runs.
+- Fast lexical deduplication by default, with optional semantic deduplication through Sentence Transformers and persistent ChromaDB.
+- Groq/OpenAI-compatible LLM extraction with a rule-based fallback.
+- Structured signals: stocks, event type, sentiment, impact horizon, suggestion, confidence, and reasoning.
+- Calibrated confidence, action score, priority, risk level, and confidence reasons for each signal.
+- SQLite schema with raw news and normalized LLM signal tables.
+- Protected web dashboard with KPIs, filters, watchlist mode, charts, top stock mentions, action queue, live price snapshot, source health, alerts, refresh, and reset controls.
+- Server-side scheduler keeps fetching news even when the browser is closed.
+- Ticker cleanup removes generic/non-tradable placeholders before display.
+- Optional webhook alerting for high-priority BUY/SELL signals.
+- Telegram delivery for newly processed stories, once per news item.
+- JSON APIs for dashboard data, pipeline execution, source health, alerts, scheduler status, stock history, and reset operations.
 
-🧹 Smart News Cleaning & Deduplication
-Uses semantic logic to avoid storing duplicate or low-signal news.
+## Project Flow
 
-🧠 LLM-Based Financial Intelligence Extraction
-Converts raw news into structured insights:
+```text
+RSS feeds
+  -> clean and normalize news
+  -> semantic duplicate check
+  -> LLM or fallback extraction
+  -> SQLite storage
+  -> Flask webpage and APIs
+```
 
-Stocks involved
+## Setup
 
-Event type (Broker call, Macro, Fund flow, etc.)
-
-Sentiment (Positive / Neutral / Negative)
-
-Impact horizon
-
-Action suggestion (Buy / Sell / Hold)
-
-Confidence + reasoning
-
-🗃 Relational + Vector-Ready Database Design
-Stores raw news and LLM outputs in normalized SQLite tables.
-
-📈 Market-Ready Signal Format
-Outputs signals usable for dashboards, backtesting, or trading engines.
-
-📊 Streamlit Dashboard (No Server Required)
-Visualize insights locally with zero backend deployment.
-
-🧠 Intelligence Pipeline
-News Sources
-     ↓
-News Cleaning & Filtering
-     ↓
-Duplicate Detection
-     ↓
-LLM Information Extraction
-     ↓
-Structured Signal Storage
-     ↓
-Dashboard / Analytics
-
-🧩 Event Types Detected
-
-BROKER_CALL – Analyst ratings, targets
-
-FUND_FLOW – Mutual funds, smart money
-
-MACRO – Inflation, rates, economy
-
-PRICE_ACTION – Rallies, crashes, results
-
-GLOBAL – International market effects
-
-🧪 Example LLM Output
-{
-  "stocks": ["HDFCBANK.NS"],
-  "event_type": "BROKER_CALL",
-  "sentiment": "POSITIVE",
-  "impact_horizon": "LONG_TERM",
-  "suggestion": "BUY",
-  "confidence": 0.95,
-  "reasoning": "Broker upgrade with strong target price"
-}
-
-🛠 Tech Stack
-Layer	Technology
-Language	Python
-LLM	Groq (LLaMA-3.1 API)
-Database	SQLite
-Finance Data	yFinance
-Visualization	Plotly
-Dashboard	Streamlit
-
-⚙️ Installation & Setup
-1️⃣ Clone Repository
-git clone https://github.com/danny8806/StockSenseAI.git
-cd StockSenseAI
-
-2️⃣ Install Dependencies
+```bash
+python3 -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
+```
 
-3️⃣ Set API Key
-export GROQ_API_KEY="your_api_key_here"
+Create a `.env` file:
 
+```bash
+GROQ_API_KEY=your_api_key_here
+GROQ_MODEL=llama-3.1-8b-instant
+STOCKSENSE_DB_PATH=news.db
+STOCKSENSE_CHROMA_PATH=.chroma
+STOCKSENSE_ENABLE_SEMANTIC_DEDUPE=0
+STOCKSENSE_AUTH_ENABLED=1
+STOCKSENSE_ADMIN_USERNAME=admin
+STOCKSENSE_ADMIN_PASSWORD=change-this-password
+STOCKSENSE_SECRET_KEY=change-this-secret
+STOCKSENSE_SERVER_SCHEDULER_ENABLED=1
+STOCKSENSE_SERVER_REFRESH_SECONDS=60
+STOCKSENSE_ALERT_WEBHOOK_URL=
+STOCKSENSE_WATCHLIST=RELIANCE.NS,TCS.NS,HDFCBANK.NS
+STOCKSENSE_TELEGRAM_ENABLED=1
+STOCKSENSE_TELEGRAM_BOT_TOKEN=
+STOCKSENSE_TELEGRAM_CHAT_ID=
+```
 
-(On Windows use set instead of export)
+Set `STOCKSENSE_ENABLE_SEMANTIC_DEDUPE=1` when you want ChromaDB + Sentence Transformers semantic duplicate detection.
 
-▶️ Run Pipeline (Local)
+## Run The Pipeline
 
-Run news processing scripts as needed, then launch dashboard:
+```bash
+python main.py
+```
 
-streamlit run dashboard/dashboard.py
+## Run The Web Dashboard
 
-📊 Dashboard Preview
+```bash
+python app.py
+```
 
-## 📊 Dashboard Preview
+Open:
 
-<p align="center">
-  <img src="assets/dashboard_overview.png" width="90%" />
-</p>
+```text
+http://127.0.0.1:5000
+```
 
-<p align="center">
-  <img src="assets/dashboard_details.png" width="90%" />
-</p>
+Default local login from `.env`:
 
-<p align="center">
-  <img src="assets/dashboard_signals.png" width="90%" />
-</p>
+```text
+admin / stocksense
+```
 
+## API Endpoints
 
-🎯 Use Cases
+- `GET /api/dashboard` returns signals and summary analytics.
+- `GET /api/signals` returns filtered signal data.
+- `GET /api/quotes` returns a yFinance price snapshot for selected tickers.
+- `GET /api/source-health` returns RSS feed health.
+- `GET /api/alerts` returns alert delivery/log entries.
+- `GET /api/scheduler` returns server-side refresh status.
+- `GET /api/stock/<ticker>` returns stock-specific signal history.
+- `POST /api/run-pipeline` fetches and processes fresh news.
+- `POST /api/reset-db` clears the database and vector store.
 
-Retail & professional traders
+## Publish
 
-Quant research
+Use a strong `.env` password and secret before deployment. A basic Dockerfile is included:
 
-Market sentiment analysis
+```bash
+docker build -t stocksenseai .
+docker run --env-file .env -p 5000:5000 stocksenseai
+```
 
-News-driven trading systems
+For Telegram delivery, send `/start` to your bot, then set `STOCKSENSE_TELEGRAM_CHAT_ID` to your chat id.
 
-Academic / portfolio projects
+## Database
 
-🔮 Roadmap
+`news_raw` stores source news:
 
-⏱ Price reaction analysis after news
+- `news_id`
+- `source`
+- `headline`
+- `full_text`
+- `url`
+- `published_at`
+- `fetched_at`
 
-🧠 Historical news impact memory
+`news_llm` stores extracted intelligence:
 
-🧩 Vector search for similar past events
+- `stocks`
+- `event_type`
+- `sentiment`
+- `impact_horizon`
+- `suggestion`
+- `confidence`
+- `signal_score`
+- `priority`
+- `risk_level`
+- `confidence_reasons`
+- `price_at_signal`
+- `price_checked_at`
+- `price_change_pct`
+- `reasoning`
+- `model_name`
+- `processed_at`
 
-📉 Backtesting signals
+## Disclaimer
 
-🤖 Agent-based reasoning layer
+This project is for education, research, and prototyping only. It is not financial advice.
 
-⚠️ Disclaimer
+## Author
 
-This project is for educational and research purposes only.
-It is not financial advice. Always perform your own analysis.
+Designed and built by Dnyaneshwar Jadhav  
+Phone: 8806160767
 
-👤 Author
-
-Dnyaneshwar Jadhav
-📧 jadhavdnyaneshwar701@gmail.com
+GitHub: [danny8806/StockSenseAI](https://github.com/danny8806/StockSenseAI)

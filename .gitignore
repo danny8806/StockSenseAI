@@ -1,4 +1,17 @@
 .env
- __pycache__
-*.pyc_
+.env.local
+.venv/
+venv/
 venu/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.DS_Store
+.chroma/
+news.db
+news.db-shm
+news.db-wal
+*.db-journal
